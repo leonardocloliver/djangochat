@@ -12,7 +12,7 @@ ENV ENV=${ENV} \
   POETRY_VERSION=1.1.13
 
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r poetry==${POETRY_VERSION}
+    && pip install --no-cache-dir poetry==${POETRY_VERSION}
 
 ADD djangochat/  /app/djangochat
 ADD chat/ /app/chat
