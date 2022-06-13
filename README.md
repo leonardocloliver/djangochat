@@ -1,5 +1,4 @@
 #Licence
-[![NPM]
 (https://github.com/leonardocloliver/djangochat/blob/main/LICENCE)
 
 
