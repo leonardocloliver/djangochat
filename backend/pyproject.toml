@@ -7,6 +7,9 @@ authors = ["leonardocloliver <leonardocloliver@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.9"
 django = "4.0.4"
+djangorestframework = "3.13.1"
+Markdown = "3.3.7"
+django-filter = "21.1"
 gunicorn = "20.1.0"
 requests = "^2.27.1"
 
@@ -14,6 +17,7 @@ requests = "^2.27.1"
 pytest = "7.1.2"
 pylint = "2.14.1"
 pylint-django = "2.5.3"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
