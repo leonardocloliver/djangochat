@@ -1,4 +1,4 @@
-FROM python:latest 
+FROM python:latest
 
 ARG ENV
 
@@ -16,7 +16,7 @@ RUN pip install --upgrade pip \
 
 ADD djangochat/  /app/djangochat
 ADD chat/ /app/chat
-ADD templates/ /app/templates 
+ADD templates/ /app/templates
 ADD manage.py /app
 ADD poetry.lock pyproject.toml /app/
 WORKDIR /app
@@ -25,10 +25,9 @@ RUN poetry config virtualenvs.create false \
   && poetry install $(test "$ENV" == production && echo "--no-dev") --no-interaction --no-ansi
 
 RUN python manage.py makemigrations \
-    && python manage.py migrate 
+    && python manage.py migrate
 
 
 EXPOSE 8000
 
 CMD ["gunicorn", "--bind", ":8000", "--workers", "3", "djangochat.wsgi:application"]
-
