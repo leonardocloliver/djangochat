@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from chat.models import Room
+from chat.models import Room, Message
+from datetime import datetime
+
 
 class RoomSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -12,3 +14,12 @@ class RoomSerializer(serializers.Serializer):
         instance.name = validated_data.get('name', instance.name)
         instance.save()
         return instance
+
+class MessageSerializer(serializers.Serializer):
+    body = serializers.CharField(max_length=1000000)
+    date = serializers.DateTimeField(default=datetime.now)
+    user = serializers.CharField(max_length=1000000)
+    room = serializers.CharField(max_length=1000000)
+
+    def create(self, validated_data):
+        return Message.objects.create(**validated_data)
