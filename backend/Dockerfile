@@ -16,7 +16,6 @@ RUN pip install --upgrade pip \
 
 ADD djangochat/  /app/djangochat
 ADD chat/ /app/chat
-ADD templates/ /app/templates
 ADD manage.py /app
 ADD poetry.lock pyproject.toml /app/
 WORKDIR /app

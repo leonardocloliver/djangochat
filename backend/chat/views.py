@@ -1,42 +1,45 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from chat.models import Room, Message
+from chat.serializers import MessageSerializer, RoomSerializer
 
-# Create your views here.
-def home(request):
-    return render(request, 'home.html')
+@api_view(['GET', 'POST'])
+def room_list(request):
+    if request.method == 'GET':
+        rooms = Room.objects.all()
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = RoomSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-def room(request, room):
-    username = request.GET.get('username')
-    room_details = Room.objects.get(name=room)
-    return render(request, 'room.html', {
-        'username': username,
-        'room': room,
-        'room_details': room_details
-    })
+@api_view(['GET', 'DELETE'])
+def room_details(request, pk):
+    try:
+        room = Room.objects.get(pk=pk)
+    except Room.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
-def checkview(request):
-    room = request.POST['room_name']
-    username = request.POST['username']
+    if request.method == 'GET':
+        serializer = RoomSerializer(room)
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        room.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    if Room.objects.filter(name=room).exists():
-        return redirect('/'+room+'/?username='+username)
-
-    new_room = Room.objects.create(name=room)
-    new_room.save()
-    return redirect('/'+room+'/?username='+username)
-
-def send(request):
-    message = request.POST['message']
-    username = request.POST['username']
-    room_id = request.POST['room_id']
-
-    new_message = Message.objects.create(value=message, user=username, room = room_id)
-    new_message.save()
-    return HttpResponse('Message sent sucessfuly')
-
-def getMessages(request, room):
-    room_details = Room.objects.get(name=room)
-
-    messages = Message.objects.filter(room=room_details.id)
-    return JsonResponse({"messages":list(messages.values())})
+@api_view(['GET','POST'])
+def message_details(request, pk):
+    if request.method == 'GET':
+        messages = Message.objects.all()
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = MessageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
